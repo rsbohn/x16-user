@@ -70,13 +70,23 @@ TG_INIT:
 	sta MAXROWS
 	;; set Layer 0 to mode 0
 	vpoke 15, L0REGS, 1
-	;; map w/h 128x64, tile w/h 8x8
+	;; map w/h scale 128x64, tile w/h 8x8
 	vpoke 15, L0REGS+1, 6
 	;; map base is 0
 	vpoke 15, L0REGS+2, 0
 	vpoke 15, L0REGS+3, 0
 	;; leave tile base (font) as is.
 	;; leave HSCROLL, VSCROLL as is.
+
+	;; Each byte is 4 pixels or 1/2 'big pixel'.
+	;; The bottom half of each 'big pixel'
+	;; is +160 bytes after the top half.
+	;; Set Layer 1 to mode 5 2bpp 640x240
+	vpoke 15, L1REGS+5, $10	;; map starts at $4000
+	vpoke 15, L1REGS+1, $10 ;; %00 0 1 0000
+				;; TILEW=1 640 pixels wide
+				;; or 160 bytes wide
+	vpoke 15, L1REGS,   $A1	;; %101 0000 1 -- mode 5, enabled
 	lda 0
 	rts
 	
