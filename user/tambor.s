@@ -1,8 +1,9 @@
 ;; tambor.s -- 160x120x4 Simple Graphics Driver
 ;; Copyright (c) 2019 Randall S. Bohn
 ;; All rights reserved. License: 2-clause BSD
-;; ca65 -o TAMBOR.O tambor.s
-;; LOAD "TAMBOR.O",1,1:NEW
+;; make
+;; cp user.bin USER.PRG
+;; LOAD "USER.PRG",1,1:NEW
 ;; SYS$A004 :REM TGINIT
 ;; REM Now library is loaded and can be used.
 
