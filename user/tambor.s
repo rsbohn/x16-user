@@ -12,12 +12,14 @@
 ;; The driver provides 160x120 'big pixels'
 ;; by mapping one pixel to a 4x2 block.
 
-;; Load as a library $A000
-	.org $A000
 	.segment "STARTUP"
-	.segment "INIT"
-	.segment "ONCE"
+	;; the X16 loader will use this address
+	;; so the library code below 
+	;; is actually loaded at $A000 as desired
+	.word $A000
+
 	.segment "CODE"
+	.org $A000
 	.byte 71, 52, 120, 160 ;; 'G4', width*256+height
 ;; Jump table
 	jmp TG_INIT	;; Set up text and graphics
@@ -59,12 +61,12 @@ TG_INIT:
 	vpoke 15, 1, 128
 	vpoke 15, 2, 64
 	;; set BASIC to 80x30
-	MAXCOLS = $D9
-	MAXROWS = $DA
+	MAXCOLS = 217
+	MAXROWS = 218
 	lda #80
 	sta MAXCOLS
 	lda #30
-	sta MAXCOLS
+	sta MAXROWS
 	;; set Layer 0 to mode 0
 	vpoke 15, L0REGS, 1
 	;; map w/h 128x64, tile w/h 8x8
