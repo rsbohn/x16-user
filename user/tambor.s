@@ -118,8 +118,77 @@ TGFY:	sta VR0
 	lda #0
 	rts
 
+;; TG_PLOT:Plot one big pixel
+;; ARGS:
+;;	A: value (for solid pixel use $00 $55 $AA or $FF)
+;;	X: X coordinate 0-159
+;;	Y: Y coordinate 0-119
+;; RETURN: A=0 ok
 TG_PLOT:
-	jmp TG_PLOT
+	pha
+	lda #0
+	sta 1
+
+	sty 0
+	clc	;; Y * 64
+	asl 0
+	rol 1
+	clc
+	asl 0
+	rol 1
+	clc
+	asl 0
+	rol 1
+	clc
+	asl 0
+	rol 1
+	clc
+	asl 0
+	rol 1
+	clc
+	asl 0
+	rol 1
+	clc
+
+	tya		;; + Y * 256
+	adc 1
+	adc #$40	;; + $4000
+	sta 1
+
+	clc		;; + X
+	txa
+	adc 0
+	sta 0
+	bcc :+
+	inc 1
+
+:	lda #0
+	sta VE_HIGH
+	lda 1
+	sta VE_MID
+	lda 0
+	sta VE_LOW
+	lda #0
+	sta VE_SEL
+	pla
+	sta VR0
+
+	pha
+	clc
+	lda #160	;; plot lower half
+	adc 0
+	sta 0
+	bcc :+
+	inc 1
+
+:	sta VE_LOW
+	lda 1
+	sta VE_MID
+	pla
+	sta VR0
+	lda #0
+	rts
+
 TG_PCOPY:
 	jmp TG_PCOPY
 TG_PSET:
