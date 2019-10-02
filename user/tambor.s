@@ -50,7 +50,18 @@ VE_SEL	= $9F25
 	sta VR0
 .endmacro
 
-;; Initialize text and graphics
+.macro vstart bank, addr
+	lda #<addr
+	sta VE_LOW
+	lda #>addr
+	sta VE_MID
+	lda #bank
+	sta VE_HIGH
+	lda #0
+	sta VE_SEL
+.endmacro
+
+;; TG_INIT:Initialize text and graphics
 ;; SYS$A004
 ;; ARGS: none
 ;; RETURN: A=0 ok
@@ -90,8 +101,23 @@ TG_INIT:
 	lda 0
 	rts
 	
-TG_FILL:
-	jmp TG_FILL
+;; TG_FILL:Fill VRAM with a single value (CLS)
+;; ARGS: A=value to fill
+;; RETURN: A=0 ok
+TG_FILL:;;
+	pha
+	vstart $10, $4000
+	pla
+	ldx #160	;; 160 * 4 = 640
+TGFX:	ldy #120*2	;; two rows for each big pixel
+TGFY:	sta VR0
+	dey
+	bne TGFY
+	dex
+	bne TGFX
+	lda #0
+	rts
+
 TG_PLOT:
 	jmp TG_PLOT
 TG_PCOPY:
